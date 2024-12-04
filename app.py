@@ -1,11 +1,12 @@
-
-import os
 from flask import Flask, jsonify
-import requests
 
 app = Flask(__name__)
 
-@app.route('/get-twitter-trends')
+@app.route('/')
+def home():
+    return jsonify({"message": "OMNIA is live and pulling insights from the zeitgeist!"})
+
+@app.route('/get-twitter-trends', methods=['GET'])
 def get_twitter_trends():
-    # Twitter API integration here
     return jsonify({"message": "Twitter trends fetched successfully"})
+
