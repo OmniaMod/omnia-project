@@ -5,9 +5,7 @@ import requests
 
 app = Flask(__name__)
 
-@app.route('/')
-def home():
-    return jsonify({"message": "OMNIA is live!"})
-
-if __name__ == '__main__':
-    app.run(debug=True)
+@app.route('/get-twitter-trends')
+def get_twitter_trends():
+    # Twitter API integration here
+    return jsonify({"message": "Twitter trends fetched successfully"})
