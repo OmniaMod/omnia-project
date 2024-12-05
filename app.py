@@ -28,11 +28,17 @@ def scrape_trends24():
         response = requests.get(url, headers=headers)
         soup = BeautifulSoup(response.text, 'html.parser')
 
-        # Extract trends from <
+        # Extract trends from Trends24
+        trends = [a.text.strip() for a in soup.select('ol.trend-card li a')]
 
+        # Handle cases where no trends are found
+        if not trends:
+            return jsonify({"error": "No trends found on the site"}), 404
 
-
-
+        return jsonify({"trends": trends})
+    except Exception as e:
+        print(f"Error in /scrape-twitter-trends: {str(e)}")
+        return jsonify({"error": str(e)}), 500
 @app.route('/google-interest-over-time', methods=['GET'])
 def google_interest_over_time():
     try:
