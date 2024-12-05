@@ -71,4 +71,23 @@ def google_interest_over_time():
         return jsonify(interest_over_time.reset_index().to_dict(orient='records'))
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+@app.route('/google-related-queries', methods=['GET'])
+def google_related_queries():
+    try:
+        # Initialize pytrends
+        pytrends = TrendReq(hl='en-US', tz=360)
+
+        # Define the keyword to analyze
+        keyword = "AI"  # Replace with any topic of interest
+
+        # Build payload for the selected keyword
+        pytrends.build_payload([keyword])
+
+        # Fetch related queries
+        related_queries = pytrends.related_queries()
+
+        # Structure the response for the selected keyword
+        return jsonify(related_queries[keyword])
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
