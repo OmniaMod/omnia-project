@@ -36,3 +36,18 @@ def get_twitter_trends():
 
 if __name__ == '__main__':
     app.run(debug=True)
+from bs4 import BeautifulSoup
+import requests
+
+@app.route('/scrape-twitter-trends', methods=['GET'])
+def scrape_twitter_trends():
+    try:
+        url = "https://twitter-trending.com/"  # Example site for trends
+        response = requests.get(url)
+        soup = BeautifulSoup(response.text, 'html.parser')
+
+        # Extract trends (adjust based on target site's structure)
+        trends = [trend.text for trend in soup.select('.trend-item h2')]
+        return jsonify({"trends": trends})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
