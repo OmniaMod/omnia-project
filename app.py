@@ -52,37 +52,23 @@ def scrape_twitter_trends():
         return jsonify({"trends": trends})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-@app.route('/get-google-trends', methods=['GET'])
-def get_google_trends():
+@app.route('/google-interest-over-time', methods=['GET'])
+def google_interest_over_time():
     try:
         # Initialize pytrends
         pytrends = TrendReq(hl='en-US', tz=360)
 
-        # Get trending searches
-        trending_searches = pytrends.trending_searches()
-        trends = trending_searches[0].tolist()  # Convert to a list of trending topics
+        # Define keywords to analyze
+        keywords = ["AI", "Crypto", "Web3"]  # Replace or expand with other topics
 
-        return jsonify({"google_trends": trends})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-        @app.route('/google-interest-over-time', methods=['GET'])
-def google_interest_over_time():
-    try:
-        pytrends = TrendReq(hl='en-US', tz=360)
-        keywords = ["AI", "Crypto", "Web3"]
+        # Build payload for the selected timeframe
         pytrends.build_payload(keywords, cat=0, timeframe='now 7-d')
+
+        # Fetch interest over time
         interest_over_time = pytrends.interest_over_time()
 
-        return jsonify(interest_over_time.to_dict())
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-@app.route('/google-related-queries', methods=['GET'])
-def google_related_queries():
-    try:
-        pytrends = TrendReq(hl='en-US', tz=360)
-        pytrends.build_payload(["AI"])
-        related_queries = pytrends.related_queries()
-        return jsonify(related_queries)
+        # Return results as JSON
+        return jsonify(interest_over_time.reset_index().to_dict(orient='records'))
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
