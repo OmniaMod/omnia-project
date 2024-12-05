@@ -17,22 +17,28 @@ def home():
 @app.route('/get-twitter-trends', methods=['GET'])
 def get_twitter_trends():
     try:
-        auth = tweepy.OAuth1UserHandler(
+        # Use OAuthHandler for Tweepy v3.10.0
+        auth = tweepy.OAuthHandler(
             os.getenv('TWITTER_API_KEY'),
-            os.getenv('TWITTER_API_SECRET'),
+            os.getenv('TWITTER_API_SECRET')
+        )
+        auth.set_access_token(
             os.getenv('TWITTER_ACCESS_TOKEN'),
             os.getenv('TWITTER_ACCESS_SECRET')
         )
         api = tweepy.API(auth)
-        trends_result = api.get_place_trends(1)
+
+        # Fetch trends for a specific location (WOEID = 1 for Worldwide)
+        trends_result = api.trends_place(1)  # WOEID 1 = Worldwide
         trends_data = [
             {"name": trend["name"], "url": trend["url"]}
             for trend in trends_result[0]["trends"]
         ]
         return jsonify({"trends": trends_data})
     except Exception as e:
-        print(f"Error fetching trends: {str(e)}")
+        print(f"Error in /get-twitter-trends: {str(e)}")
         return jsonify({"error": str(e)}), 500
+
 
 
 if __name__ == '__main__':
@@ -89,13 +95,14 @@ def google_related_queries():
         # Debug the structure of the related queries
         print(f"Related Queries Debug: {related_queries}")
 
-        # Handle cases where no related queries are found
-        if not related_queries or keyword not in related_queries:
+        # Check if related queries exist for the keyword
+        if not related_queries or keyword not in related_queries or not related_queries[keyword]:
             return jsonify({"error": f"No related queries found for keyword: {keyword}"}), 404
 
-        # Return the data for the selected keyword
+        # Return the related queries data for the keyword
         return jsonify(related_queries[keyword])
     except Exception as e:
-        # Log errors for debugging
+        # Log and return errors
         print(f"Error in /google-related-queries: {str(e)}")
         return jsonify({"error": str(e)}), 500
+
