@@ -1,11 +1,47 @@
 from flask import Flask, jsonify, request
 from pytrends.request import TrendReq
 from bs4 import BeautifulSoup
+from playwright.async_api import async_playwright
 import os
 import tweepy
 import requests
+import asyncio
+
 
 app = Flask(__name__)
+
+@app.route('/scrape-twitter-trends', methods=['GET'])
+async def scrape_twitter_trends():
+    try:
+        async with async_playwright() as p:
+            browser = await p.chromium.launch(headless=True)  # Launch headless browser
+            page = await browser.new_page()
+            
+            # Navigate to Trends24
+            await page.goto("https://trends24.in/")
+
+            # Wait for trends to load
+            await page.wait_for_selector("ol.trend-card li a")
+
+            # Extract trends
+            trends = await page.eval_on_selector_all(
+                "ol.trend-card li a",
+                "elements => elements.map(el => el.innerText)"
+            )
+
+            await browser.close()
+
+            # Handle cases where no trends are found
+            if not trends:
+                return jsonify({"error": "No trends found on the site"}), 404
+
+            return jsonify({"trends": trends})
+    except Exception as e:
+        print(f"Error in /scrape-twitter-trends: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+if __name__ == '__main__':
+    app.run(debug=True)
 
 @app.route('/')
 def home():
