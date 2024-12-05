@@ -26,11 +26,15 @@ def get_twitter_trends():
         api = tweepy.API(auth)
 
         # Fetch trends for a specific location (WOEID = 1 for Worldwide)
-        trends = api.trends_place(1)
-        trends_data = [{"name": trend["name"], "url": trend["url"]} for trend in trends[0]["trends"]]
+        trends_result = api.get_place_trends(1)  # 1 is the WOEID for Worldwide
+        trends_data = [
+            {"name": trend["name"], "url": trend["url"]}
+            for trend in trends_result[0]["trends"]
+        ]
         return jsonify({"trends": trends_data})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True)
