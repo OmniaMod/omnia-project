@@ -72,13 +72,12 @@ def google_interest_over_time():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 @app.route('/google-related-queries', methods=['GET'])
-def google_related_queries():
+def google_related_queries_debug():
     try:
-        # Initialize pytrends
         pytrends = TrendReq(hl='en-US', tz=360)
 
-        # Define the keyword to analyze
-        keyword = "AI"  # Replace with any topic of interest
+        # Define the keyword to analyze (or fetch dynamically)
+        keyword = request.args.get('keyword', 'AI')
 
         # Build payload for the selected keyword
         pytrends.build_payload([keyword])
@@ -86,15 +85,17 @@ def google_related_queries():
         # Fetch related queries
         related_queries = pytrends.related_queries()
 
-        # Debug the structure of related_queries
-        print(f"Related Queries Data: {related_queries}")
+        # Log the raw related queries data for debugging
+        print(f"Related Queries Raw Data: {related_queries}")
 
-        # Check if the keyword has data
+        # Check if the data is available for the keyword
         if keyword not in related_queries or not related_queries[keyword]:
             return jsonify({"error": f"No related queries found for keyword: {keyword}"}), 404
 
-        # Return the data for the selected keyword
+        # Return the related queries data
         return jsonify(related_queries[keyword])
     except Exception as e:
+        # Log the error for debugging
+        print(f"Error in /google-related-queries: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
