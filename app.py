@@ -25,11 +25,16 @@ def scrape_twitter_trends():
         response = requests.get(url)
         soup = BeautifulSoup(response.text, 'html.parser')
 
-        # Extract trends (adjust based on target site's structure)
-        trends = [trend.text for trend in soup.select('.trend-item h2')]
+        # Update the selector based on the site's structure
+        trends = [trend.get_text() for trend in soup.select('.trend-item h2')]
+
+        if not trends:
+            return jsonify({"error": "No trends found on the site"}), 404
+
         return jsonify({"trends": trends})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 @app.route('/google-interest-over-time', methods=['GET'])
 def google_interest_over_time():
