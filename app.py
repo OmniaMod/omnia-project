@@ -19,17 +19,17 @@ def home():
     })
 
 @app.route('/scrape-twitter-trends', methods=['GET'])
-def scrape_twitter_trends():
+def scrape_trends24():
     try:
-        url = "https://www.twitter-trending.com/"  # Target site
+        url = "https://trends24.in/"
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
         }
         response = requests.get(url, headers=headers)
         soup = BeautifulSoup(response.text, 'html.parser')
 
-        # Extract trends from <div class="trendWord">
-        trends = [link.get_text().strip() for link in soup.select('div.trendWord a')]
+        # Extract trends from Trends24
+        trends = [a.text.strip() for a in soup.select('ol.trend-card li a')]
 
         # Handle cases where no trends are found
         if not trends:
