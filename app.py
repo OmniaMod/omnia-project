@@ -22,10 +22,13 @@ def home():
 def scrape_twitter_trends():
     try:
         url = "https://www.twitter-trending.com/"  # Target site
-        response = requests.get(url)
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+        }
+        response = requests.get(url, headers=headers)
         soup = BeautifulSoup(response.text, 'html.parser')
 
-        # Extract trends from <div class="trendWord"> containing the <a> tag
+        # Extract trends from <div class="trendWord">
         trends = [link.get_text().strip() for link in soup.select('div.trendWord a')]
 
         # Handle cases where no trends are found
@@ -36,6 +39,7 @@ def scrape_twitter_trends():
     except Exception as e:
         print(f"Error in /scrape-twitter-trends: {str(e)}")
         return jsonify({"error": str(e)}), 500
+
 
 
 @app.route('/google-interest-over-time', methods=['GET'])
