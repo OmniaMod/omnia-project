@@ -4,3 +4,4 @@ python-dotenv
 tweepy
 newsapi-python
 praw
+beautifulsoup4
