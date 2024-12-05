@@ -1,3 +1,4 @@
+from pytrends.request import TrendReq
 import os
 import tweepy
 from flask import Flask, jsonify
@@ -49,5 +50,18 @@ def scrape_twitter_trends():
         # Extract trends (adjust based on target site's structure)
         trends = [trend.text for trend in soup.select('.trend-item h2')]
         return jsonify({"trends": trends})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+@app.route('/get-google-trends', methods=['GET'])
+def get_google_trends():
+    try:
+        # Initialize pytrends
+        pytrends = TrendReq(hl='en-US', tz=360)
+
+        # Get trending searches
+        trending_searches = pytrends.trending_searches()
+        trends = trending_searches[0].tolist()  # Convert to a list of trending topics
+
+        return jsonify({"google_trends": trends})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
