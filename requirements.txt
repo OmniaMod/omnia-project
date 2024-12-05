@@ -1,9 +1,5 @@
-flask
-requests
-python-dotenv
-tweepy==3.10.0
-newsapi-python
-praw
-beautifulsoup4
-pytrends
-playwright
+flask==2.3.2
+playwright==1.36.0
+pytrends==4.8.0
+requests==2.31.0
+beautifulsoup4==4.12.2
