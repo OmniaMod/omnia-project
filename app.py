@@ -18,30 +18,24 @@ def home():
         }
     })
 
-@app.route('/scrape-twitter-trends', methods=['GET'])
-def scrape_trends24():
+from pytrends.request import TrendReq
+
+@app.route('/google-trending-searches', methods=['GET'])
+def google_trending_searches():
     try:
-        url = "https://trends24.in/"
-        headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
-        }
-        response = requests.get(url, headers=headers)
+        pytrends = TrendReq(hl='en-US', tz=360)
+        trending_searches = pytrends.trending_searches(pn='united_states')  # Replace 'united_states' with your region
 
-        # Debug the fetched HTML
-        print(response.text[:1000])  # Log the first 1000 characters of the HTML
-
-        soup = BeautifulSoup(response.text, 'html.parser')
-
-        # Extract trends from <ol class="trend-card">
-        trends = [a.text.strip() for a in soup.select('ol.trend-card li a')]
+        # Convert the trending searches to a list
+        trends = trending_searches[0].tolist()
 
         if not trends:
-            return jsonify({"error": "No trends found on the site"}), 404
+            return jsonify({"error": "No trends found"}), 404
 
         return jsonify({"trends": trends})
     except Exception as e:
-        print(f"Error in /scrape-twitter-trends: {str(e)}")
         return jsonify({"error": str(e)}), 500
+
 
 @app.route('/google-interest-over-time', methods=['GET'])
 def google_interest_over_time():
