@@ -89,7 +89,11 @@ def google_related_queries():
         # Debug the structure of related_queries
         print(f"Related Queries Data: {related_queries}")
 
-        # Structure the response for the selected keyword
+        # Check if the keyword has data
+        if keyword not in related_queries or not related_queries[keyword]:
+            return jsonify({"error": f"No related queries found for keyword: {keyword}"}), 404
+
+        # Return the data for the selected keyword
         return jsonify(related_queries[keyword])
     except Exception as e:
         return jsonify({"error": str(e)}), 500
