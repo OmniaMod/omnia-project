@@ -105,4 +105,3 @@ def google_related_queries():
         # Log and return errors
         print(f"Error in /google-related-queries: {str(e)}")
         return jsonify({"error": str(e)}), 500
-
