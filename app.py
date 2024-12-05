@@ -86,6 +86,9 @@ def google_related_queries():
         # Fetch related queries
         related_queries = pytrends.related_queries()
 
+        # Debug the structure of related_queries
+        print(f"Related Queries Data: {related_queries}")
+
         # Structure the response for the selected keyword
         return jsonify(related_queries[keyword])
     except Exception as e:
