@@ -4,23 +4,20 @@ from flask import Flask, jsonify
 
 app = Flask(__name__)
 
-@app.route('/')
-def home():
-    return jsonify({
-        "message": "OMNIA is live and pulling insights from the zeitgeist!",
-        "routes": {
-            "/get-twitter-trends": "Fetches Twitter trends"
-        }
-    })
-
 @app.route('/get-twitter-trends', methods=['GET'])
 def get_twitter_trends():
     try:
-        client = tweepy.Client(bearer_token=os.getenv('TWITTER_API_KEY'))
-        trends = client.get_trends_place(1)  # 1 is the WOEID for worldwide
+        # Authenticate using v1.1 API credentials
+        auth = tweepy.OAuth1UserHandler(
+            os.getenv('TWITTER_API_KEY'),
+            os.getenv('TWITTER_API_SECRET'),
+            os.getenv('TWITTER_ACCESS_TOKEN'),
+            os.getenv('TWITTER_ACCESS_SECRET')
+        )
+        api = tweepy.API(auth)
+        
+        # Fetch trends for a specific location (WOEID = 1 for Worldwide)
+        trends = api.trends_place(1)
         return jsonify({"trends": trends})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
-if __name__ == '__main__':
-    app.run(debug=True)
