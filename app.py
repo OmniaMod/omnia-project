@@ -93,14 +93,14 @@ def google_related_queries():
         related_queries = pytrends.related_queries()
 
         # Debug the structure of the related queries
-        print(f"Related Queries Debug: {related_queries}")
+        print(f"Related Queries Raw Data: {related_queries}")
 
-        # Check if related queries exist for the keyword
-        if not related_queries or keyword not in related_queries or not related_queries[keyword]:
+        # Check if related queries exist and return a safe structure
+        if not related_queries or keyword not in related_queries:
             return jsonify({"error": f"No related queries found for keyword: {keyword}"}), 404
 
-        # Return the related queries data for the keyword
-        return jsonify(related_queries[keyword])
+        keyword_data = related_queries.get(keyword, {})
+        return jsonify(keyword_data or {"error": f"No related queries found for keyword: {keyword}"})
     except Exception as e:
         # Log and return errors
         print(f"Error in /google-related-queries: {str(e)}")
