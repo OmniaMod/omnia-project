@@ -1,7 +1,7 @@
 from pytrends.request import TrendReq
 import os
 import tweepy
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
