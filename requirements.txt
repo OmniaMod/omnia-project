@@ -5,3 +5,4 @@ tweepy
 newsapi-python
 praw
 beautifulsoup4
+pytrends
