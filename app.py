@@ -65,3 +65,24 @@ def get_google_trends():
         return jsonify({"google_trends": trends})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+        @app.route('/google-interest-over-time', methods=['GET'])
+def google_interest_over_time():
+    try:
+        pytrends = TrendReq(hl='en-US', tz=360)
+        keywords = ["AI", "Crypto", "Web3"]
+        pytrends.build_payload(keywords, cat=0, timeframe='now 7-d')
+        interest_over_time = pytrends.interest_over_time()
+
+        return jsonify(interest_over_time.to_dict())
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+@app.route('/google-related-queries', methods=['GET'])
+def google_related_queries():
+    try:
+        pytrends = TrendReq(hl='en-US', tz=360)
+        pytrends.build_payload(["AI"])
+        related_queries = pytrends.related_queries()
+        return jsonify(related_queries)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
