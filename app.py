@@ -70,25 +70,21 @@ def google_related_queries():
         # Fetch related queries
         related_queries = pytrends.related_queries()
 
-        # Debug the full structure of the related queries
+        # Debug the raw related queries data
         print(f"Related Queries Full Data: {related_queries}")
 
-        # Check if the data for the keyword exists
-        if not related_queries or keyword not in related_queries:
+        # Handle missing or empty related queries
+        if not related_queries or keyword not in related_queries or not related_queries[keyword]:
             return jsonify({"error": f"No related queries found for keyword: {keyword}"}), 404
 
-        # Safely extract the data for the keyword
+        # Safely extract and return the related queries
         keyword_data = related_queries.get(keyword, {})
-
-        # Return the data or an error if no results are found
-        if not keyword_data:
-            return jsonify({"error": f"No related queries found for keyword: {keyword}"}), 404
-
         return jsonify(keyword_data)
     except Exception as e:
-        # Log and return the detailed error
+        # Log the error for debugging
         print(f"Error in /google-related-queries: {str(e)}")
         return jsonify({"error": str(e)}), 500
+
 
 # Commented out the Twitter API route due to suspended account
 # @app.route('/get-twitter-trends', methods=['GET'])
