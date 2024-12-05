@@ -21,18 +21,20 @@ def home():
 @app.route('/scrape-twitter-trends', methods=['GET'])
 def scrape_twitter_trends():
     try:
-        url = "https://twitter-trending.com/"  # Example site for trends
+        url = "https://www.twitter-trending.com/"  # Target site
         response = requests.get(url)
         soup = BeautifulSoup(response.text, 'html.parser')
 
-        # Update the selector based on the site's structure
-        trends = [trend.get_text() for trend in soup.select('.trend-item h2')]
+        # Extract trends from <div class="trendWord"> containing the <a> tag
+        trends = [link.get_text().strip() for link in soup.select('div.trendWord a')]
 
+        # Handle cases where no trends are found
         if not trends:
             return jsonify({"error": "No trends found on the site"}), 404
 
         return jsonify({"trends": trends})
     except Exception as e:
+        print(f"Error in /scrape-twitter-trends: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
 
